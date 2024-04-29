@@ -1,0 +1,52 @@
+﻿@model List<Order>
+@{
+    ViewData["Title"] = "Mis pedidos";
+}
+
+<h1 class="account-title">Mis pedidos</h1>
+@if (Model.Count == 0)
+{
+    <p class="no-items">Aún no has realizado ningún pedido, conoce las colecciones y llévate el guardarropa perfecto</p>
+
+    <div class="cart-categories-links">
+        <a asp-controller="Home" asp-action="Catalogue" asp-route-category="Shirts">CAMISAS</a>
+        <a asp-controller="Home" asp-action="Catalogue" asp-route-category="Pants">PANTALONES</a>
+        <a asp-controller="Home" asp-action="Catalogue" asp-route-category="Shoes">CALZADO</a>
+        <a asp-controller="Home" asp-action="Catalogue" asp-route-category="Sweaters">SUETERES</a>
+    </div>
+}
+<div class="account-container">
+    <div class="order-container">
+        @foreach(var order in Model)
+        {
+            <div class="order">
+                <div class="order-info">
+                    <div class="order-row">
+                        <span class="order-id">Pedido N. @order.Id</span>
+                        <span>@order.Date.ToShortDateString()</span>
+                    </div>
+                    <div class="order-row">
+                        <span>Estado: @order.Status</span>
+                        <span>$@order.Total</span>
+                    </div>
+                </div>
+                <hr />
+
+                @foreach (var product in order.OrderProducts)
+                {
+                    <div class="payment-product">
+                        <img src="~/@product.Product.PathImage" alt="image" height="100px"/>
+                        <div class="payment-product-text">
+                            <div class="payment-product-info">
+                                <span>@product.Product.Name</span>
+                                <span>@product.Product.Description</span>
+                                <span>@product.Product.Price</span>
+                                <span>Cantidad: @product.Quantity</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

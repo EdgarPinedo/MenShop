@@ -1,0 +1,31 @@
+﻿@using Online_Shop.Dtos;
+@model RegisterRequest
+@{
+    ViewData["Title"] = "Iniciar sesión";
+}
+
+<div class="auth-container">
+    <div class="images-container">
+        <img src="~/Images/silueta-2.svg" />
+        <img src="~/Images/silueta-1.svg" />
+    </div>
+    <div>
+        <div class="form-container">
+            <h1>Iniciar sesión</h1>
+            <form asp-action="Login" method="post" class="auth-form">
+                <label>Email</label>
+                <input asp-for="Email" type="email" required />
+                <label>Contraseña</label>
+                <input asp-for="Password" type="password" required />
+                <span>@ViewData["UnsuccessfulLogin"]</span>
+
+                <button type="submit">Iniciar sesión</button>
+                <hr />
+                <div>
+                    <span>Aún no tienes una cuenta?</span>
+                    <a asp-action="Register">Registrarse</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

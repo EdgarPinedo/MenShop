@@ -1,0 +1,145 @@
+﻿@using Online_Shop.Dtos;
+@model PaymentViewModel
+
+@{
+    ViewData["Title"] = "Proceder a pagar";
+}
+
+
+<h1 class="payment-title">Proceder al pago</h1>
+<div class="payment-container">
+    <form asp-action="Index" method="post" class="payment-center">
+        <input asp-for="UserId" type="hidden" />
+        <input asp-for="Total" type="hidden" />
+        <input asp-for="SelectedAddress" id="selected-address" type="hidden"/>
+        <input asp-for="SelectedCard" id="selected-card" type="hidden"/>
+
+        @if(ViewData["BadRequest"] != null)
+        {
+            <span>@ViewData["BadRequest"]</span>
+        }
+        @{
+            int index = 0;
+            string active = "";
+        }
+        <div class="payment-flex">
+            <h2>Dirección de envío</h2>
+            @foreach(var address in Model.Addresses)
+            {
+                active = (index == 0) ? "payment-active" : "";
+                <div class="payment-item address @active" id="@address.Id"
+                     onclick="setActiveAddress(this)">
+                    <span>@address.FullName</span>
+                    <span>
+                        @address.Street,
+                        @address.City,
+                        @address.States 
+                        @address.PostalCode,
+                        @address.Country
+                    </span>
+                </div>
+
+                <input asp-for="Addresses[index].Id" type="hidden" />
+                <input asp-for="Addresses[index].Street" type="hidden" />
+                <input asp-for="Addresses[index].City" type="hidden" />
+                <input asp-for="Addresses[index].States" type="hidden" />
+                <input asp-for="Addresses[index].Country" type="hidden" />
+                <input asp-for="Addresses[index].PostalCode" type="hidden" />
+                <input asp-for="Addresses[index].UserId" type="hidden" />
+                <input asp-for="Addresses[index].FullName" type="hidden" />
+                index++;
+            }
+            <a asp-controller="Account" asp-action="CreateAddress" asp-route-redirect="true">
+                Agregar nueva dirección
+            </a>
+        </div>
+        <hr />
+        <div class="payment-flex">
+            <h2>Método de pago</h2>
+            @{index = 0;}
+            @foreach (var card in Model.CreditCards)
+            {
+                active = (index == 0) ? "payment-active" : "";
+                string cardNumber = "**** **** **** " + card.Number[^4..];
+                <div class="payment-item cards @active" id="@card.Id"
+                     onclick="setActiveCard(this)">
+                    <span>@card.FullName</span>
+                    <span>@cardNumber</span>
+                </div>
+
+                <input asp-for="CreditCards[index].Id" type="hidden" />
+                <input asp-for="CreditCards[index].Number" type="hidden" />
+                <input asp-for="CreditCards[index].ExpirationMonth" type="hidden" />
+                <input asp-for="CreditCards[index].ExpirationYear" type="hidden" />
+                <input asp-for="CreditCards[index].Cvv" type="hidden" />
+                <input asp-for="CreditCards[index].UserId" type="hidden" />
+                <input asp-for="CreditCards[index].FullName" type="hidden" />
+                index++;
+            }
+            <a asp-controller="Account" asp-action="CreateCreditCard" asp-route-redirect="true">
+                Agregar nuevo método de pago
+            </a>
+        </div>
+        <hr />
+        <div class="payment-flex">
+            <h2>Productos</h2>
+            @for (int i = 0; i < Model.CartItems.Count; i++)
+            {
+                var subtotal = Model.CartItems[i].Quantity * Model.CartItems[i].Product.Price;
+                <div class="payment-product">
+                    <img src="~/@Model.CartItems[i].Product.PathImage" alt="image" height="100px" />
+                    <div class="payment-product-text">
+                        <div class="payment-product-info">
+                            <span>@Model.CartItems[i].Product.Name</span>
+                            <span>@Model.CartItems[i].Product.Description</span>
+                            <span>$@Model.CartItems[i].Product.Price</span>
+                        </div>
+                        <div class="payment-product-subtotal">
+                            <span>Cantidad: @Model.CartItems[i].Quantity</span>
+                            <span>Subtotal: $@subtotal</span>
+                        </div>
+                    </div>
+                </div>
+                <input asp-for="CartItems[i].Id" type="hidden" />
+                <input asp-for="CartItems[i].UserId" type="hidden"/>
+                <input asp-for="CartItems[i].ProductId" type="hidden"/>
+                <input asp-for="CartItems[i].Quantity" type="hidden"/>
+                <input asp-for="CartItems[i].Size" type="hidden" />
+                <input asp-for="CartItems[i].Color" type="hidden" />
+
+                <input asp-for="CartItems[i].Product.Id" type="hidden" />
+                <input asp-for="CartItems[i].Product.Name" type="hidden" />
+                <input asp-for="CartItems[i].Product.Description" type="hidden" />
+                <input asp-for="CartItems[i].Product.Price" type="hidden" />
+                <input asp-for="CartItems[i].Product.CategoryId" type="hidden" />
+                <input asp-for="CartItems[i].Product.PathImage" type="hidden" />
+            }
+        </div>
+        <hr />
+        <div class="payment-total">
+            <h2>Total: $@Model.Total</h2>
+            <button type="submit">Pagar</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    let selectedAddress = document.getElementById("selected-address");
+    let selectedCard = document.getElementById("selected-card");
+
+    let activeAddress = document.querySelector(".address");
+    const setActiveAddress = (item) => {
+        activeAddress.classList.remove("payment-active");
+        activeAddress = item;
+        selectedAddress.value = activeAddress.id;
+        activeAddress.classList.add("payment-active");
+    }
+
+    let activeCard = document.querySelector(".cards");
+    const setActiveCard = (item) => {
+        activeCard.classList.remove("payment-active");
+        activeCard = item;
+        selectedCard.value = activeCard.id;
+        activeCard.classList.add("payment-active");
+    }
+</script>

@@ -1,0 +1,139 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Online Shop for men" />
+    <title>@ViewData["Title"] - Shop</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+<body>
+    <header>
+        <nav class="nav">
+            <div>
+                <a asp-controller="Home" asp-action="Index" class="home_link">
+                    <svg width="42" height="42" viewBox="0 0 32 32" fill="currentColor">
+                        <g>
+                            <path d="M27,23.09V13.5a1,1,0,0,0-2,0v10a1,1,0,0,0,.29.71l.3.29H20.41l.3-.29A1,1,0,0,0,21,23.5v-10a1,1,0,0,0-1.92-.38l-4.6,11L7.91,10.08A1.08,1.08,0,0,0,7.8,9.9L6,7.5h4.38L15.11,17a1,1,0,0,0,.93.55,1,1,0,0,0,.89-.63L20.68,7.5h4.91l-.3.29A1,1,0,0,0,25,8.5v1a1,1,0,0,0,2,0V8.91l1.71-1.7a1,1,0,0,0,.21-1.09A1,1,0,0,0,28,5.5H20a1,1,0,0,0-.93.63L15.9,14.06l-4-8A1,1,0,0,0,11,5.5H4a1,1,0,0,0-.89.55,1,1,0,0,0,.09,1L6.14,11l.36.77V20.5L3.2,24.9A1,1,0,0,0,3.11,26,1,1,0,0,0,4,26.5h7a1,1,0,0,0,.89-.55,1,1,0,0,0-.09-1.05L8.5,20.5V16.08l4.59,9.84a1,1,0,0,0,.91.58h1a1,1,0,0,0,.92-.62L19,18.5v4.59l-1.71,1.7a1,1,0,0,0-.21,1.09,1,1,0,0,0,.92.62H28a1,1,0,0,0,.92-.62,1,1,0,0,0-.21-1.09ZM6,24.5l1.5-2,1.5,2Z" />
+                        </g>
+                    </svg>
+                    SHOP
+                </a>
+            </div>
+            <div class="nav_right">
+                <div id="darkBg" class="dark_bg" onclick="closeMenu()"></div>
+                <ul id="panel" class="links">
+                    <li class="close_btn" onclick="closeMenu()">
+                        <i class="bi bi-x-lg"></i>
+                    </li>
+                    <li>
+                        <a asp-controller="Home" asp-action="Catalogue" asp-route-category="Shirts">
+                            CAMISAS
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="Home" asp-action="Catalogue" asp-route-category="Pants">
+                            PANTALONES
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="Home" asp-action="Catalogue" asp-route-category="Shoes">
+                            CALZADO
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="Home" asp-action="Catalogue" asp-route-category="Sweaters">
+                            SUETERES
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+                <div class="icons">
+                    <button onclick="openMenu()" aria-label="menu">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <button aria-label="cart">
+                        <a asp-controller="Cart" asp-action="Index" aria-label="cart">
+                            <i class="bi bi-bag"></i>
+                        </a>
+                    </button>
+                    <button id="btnRef" onclick="showUserMenu()" aria-label="user menu">
+                        <i class="bi bi-person"></i>
+                    </button>
+                    <div id="container" class="user_menu">
+                        @if (User.Identity is not null)
+                        {
+                            if (!User.Identity.IsAuthenticated)
+                            {
+                                <a asp-controller="Authentication" asp-action="Login" aria-label="login">Iniciar sesión</a>
+                                <a asp-controller="Authentication" asp-action="Register" aria-label="register">Registrarse</a>
+                            }
+                            else
+                            {
+                                <a asp-controller="Account" asp-action="Index" aria-label="logout">Mi cuenta</a>
+                                <a asp-controller="Home" asp-action="Logout" aria-label="logout">Cerrar sesión</a>
+                            }
+                        }
+                    </div>
+                </div>
+                <UserMenu />
+            </div>
+        </nav>
+    </header>
+
+    <main role="main">
+        @RenderBody()
+    </main>
+
+    @* <footer class="footer-container">
+        <div class="footer-links">
+            <span class="text-light">&copy; 2023 - Online_Shop -</span> 
+            <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer> *@
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        let isOpen = false;
+        let container = document.getElementById('container');
+        let panel = document.getElementById('panel');
+        let darkBg = document.getElementById('darkBg');
+        let btnRef = document.getElementById('btnRef');
+
+        const openMenu = () => {
+            panel.style.right = '0px';
+            darkBg.style.visibility = 'visible';
+        }
+
+        const closeMenu = () => {
+            panel.style.right = '-600px';
+            darkBg.style.visibility = 'hidden';
+        }
+
+        const showUserMenu = () => {
+            if (isOpen) {
+                isOpen = false;
+                container.style.visibility = 'hidden';
+            }
+            else {
+                isOpen = true;
+                container.style.visibility = 'visible';
+            }
+        }
+
+        document.addEventListener('mouseup', function (e) {
+            if (isOpen && !btnRef.contains(e.target)) {
+                container.style.visibility = 'hidden';
+                isOpen = false;
+            }
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

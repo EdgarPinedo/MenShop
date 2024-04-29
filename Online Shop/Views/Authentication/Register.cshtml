@@ -1,0 +1,41 @@
+﻿@using Online_Shop.Dtos;
+@model RegisterRequest
+@{
+    ViewData["Title"] = "Registrarse";
+}
+
+<div class="auth-container">
+    <div>
+        <div class="form-container">
+            <h1>Registrarse</h1>
+            <form asp-action="Register" method="post" class="auth-form">
+                <label>Nombre(s)</label>
+                <input asp-for="FirstName" required />
+                <label>Apellido(s)</label>
+                <input asp-for="LastName" required />
+                <label>Email</label>
+                <input asp-for="Email" type="email" required />
+                <span>@ViewData["EmailAlreadyRegistered"]</span>
+                <label>Contraseña</label>
+                <input asp-for="Password" placeholder="Escribe al menos 6 caracteres"
+                       type="password" required />
+                <span asp-validation-for="Password"></span>
+                <label>Confirmar contraseña</label>
+                <input asp-for="ConfirmPassword" placeholder="Repite la contraseña"
+                       type="password" required />
+                <span asp-validation-for="ConfirmPassword"></span>
+
+                <button type="submit">Registrarse</button>
+                <hr />
+                <div>
+                    <span>Ya tienes una cuenta?</span>
+                    <a asp-action="Login">Inicia sesión</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="images-container">
+        <img src="~/Images/silueta-3.svg" />
+        <img src="~/Images/silueta-4.svg" />
+    </div>
+</div>

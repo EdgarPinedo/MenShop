@@ -1,0 +1,40 @@
+﻿@using Online_Shop.Dtos;
+@model CreditCardDTO
+@{
+    ViewData["Title"] = "Agregar tarjeta de crédito";
+}
+
+<h1 class="account-title">Agregar tarjeta de crédito</h1>
+<div class="ls-flex">
+    <form asp-action="CreateCreditCard" asp-route-redirect="@ViewData["redirect"]" method="post">
+        <input asp-for="Id" type="hidden" />
+        <input asp-for="UserId" type="hidden" />
+        <label>Nombre completo:</label>
+        <input asp-for="FullName" required />
+        <label>Número de la tarjeta:</label>
+        <input asp-for="Number" type="number" required />
+        <span asp-validation-for="Number"></span>
+
+        <label>Fecha de expiración:</label>
+        <div>
+            <select asp-for="ExpirationMonth">
+                @for (int month = 1; month <= 12; month++)
+                {
+                    <option value="@month">@month</option>
+                }
+            </select>
+            <select asp-for="ExpirationYear">
+                @for (int year = 2024; year <= 2034; year++)
+                {
+                    <option value="@year">@year</option>
+                }
+            </select>
+        </div>
+
+        <label>CVV:</label>
+        <input asp-for="Cvv" class="card-cvv" required />
+        <span asp-validation-for="Cvv"></span>
+
+        <button type="submit">Guardar</button>
+    </form>
+</div>

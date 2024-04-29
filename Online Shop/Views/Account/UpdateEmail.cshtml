@@ -1,0 +1,20 @@
+﻿@using Online_Shop.Dtos;
+@model ChangeEmailRequest
+@{
+    ViewData["Title"] = "Actualizar email";
+}
+
+<h1 class="account-title">Modificar email</h1>
+<div class="ls-flex">
+    <form asp-action="UpdateEmail" method="post">
+        <input asp-for="Id" type="hidden" />
+        <label>Tu nuevo email:</label>
+        <input asp-for="Email" type="email"/>
+        @if(ViewData["BadEmail"] != null)
+        {
+            <span>@ViewData["BadEmail"]</span>
+        }
+
+        <button type="submit">Guardar</button>
+    </form>
+</div>

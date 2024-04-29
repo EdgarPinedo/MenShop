@@ -1,0 +1,33 @@
+﻿@using Online_Shop.Dtos;
+@model List<AddressDTO>
+@{
+    ViewData["Title"] = "Mis direcciones";
+}
+
+<h1 class="account-title">Mis direcciones</h1>
+<div class="account-container">
+    <div class="addresses-grid">
+        <a asp-action="CreateAddress" class="address-new">
+            <i class="bi bi-plus"></i>
+            <span>Agregar dirección</span>
+        </a>
+        @foreach (var address in Model)
+        {
+            <div class="address-item">
+                <span>@address.FullName</span>
+                <hr />
+                <span>@address.Street</span>
+                <span>@address.City, @address.States @address.PostalCode</span>
+                <span>@address.Country</span>
+                <div class="address-actions">
+                    <a asp-action="UpdateAddress" asp-route-id="@address.Id">
+                        <i class="bi bi-pen"></i>
+                    </a>
+                    <a asp-action="DeleteAddress" asp-route-id="@address.Id">
+                        <i class="bi bi-trash"></i>
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</div>

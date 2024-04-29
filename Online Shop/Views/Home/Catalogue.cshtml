@@ -1,0 +1,242 @@
+﻿@using Online_Shop.Utilities;
+@using Online_Shop.Dtos;
+@model PaginatedList<ProductResponse>;
+
+<div class="catalogue_container">
+    <div id="dark-bg-2" class="dark_bg" onclick="closePanel()"></div>
+    
+    <div class="filter_panel" id="filter-panel">
+        <div onclick="closePanel()">
+            <i class="bi bi-x-lg"></i>
+        </div>
+        <h3>MARCAS</h3>
+        <div>
+            @foreach (var brand in ViewData["brands"] as List<BrandResponse>)
+            {
+                <a asp-controller="Home" asp-action="Catalogue"
+                   asp-route-category="@ViewData["category"]"
+                   asp-route-brand="@brand.Name" class="brand">
+                    <span>@brand.Name</span>
+                    <span>(@brand.Count)</span>
+                </a>
+            }
+        </div>
+        <h3>PRECIO</h3>
+        <div class="price-container">
+            @{
+                var obj = ViewData["pricerange"] as PriceRangeResponse;
+            }
+            <div class="spans">
+                <span id="span-min">@obj?.Min</span>
+                <span id="span-max">@obj?.Max</span>
+            </div>
+            <div class="slider">
+                <div id="progress" class="progress"></div>
+            </div>
+            <div class="range_input">
+                @{
+                    var minValue = obj?.Min;
+                    var maxValue = obj?.Max;
+
+                    if (ViewData["minPrice"] != null)
+                    {
+                        minValue = Convert.ToDecimal(ViewData["minPrice"]);
+                    }
+
+                    if (ViewData["maxPrice"] != null)
+                    {
+                        maxValue = Convert.ToDecimal(ViewData["maxPrice"]);
+                    }
+                }
+
+                <input id="min_input"
+                       type="range"
+                       class="range_min"
+                       min="@obj?.Min"
+                       max="@obj?.Max"
+                       value="@minValue"
+                       onInput="changeMinPrice(event)"
+                       onmouseup="navigateTo()"
+                       step="0.01" />
+
+                <input id="max_input"
+                       type="range"
+                       className="range_max"
+                       min="@obj?.Min"
+                       max="@obj?.Max"
+                       value="@maxValue"
+                       onInput="changeMaxPrice(event)"
+                       onmouseup="navigateTo()"
+                       step="0.01" />
+            </div>
+        </div>
+    </div>
+
+    <div class="l-container">
+        <h1>@ViewData["title"]?.ToString()?.ToUpper()</h1>
+        <div class="filters">
+            <button class="filters_btn" onclick="openFilters()">
+                <i class="bi bi-sliders"></i> Filtros
+            </button>
+            @if(ViewData["brand"] is not null)
+            {
+                <a asp-controller="Home" asp-action="Catalogue"
+                   asp-route-category="@ViewData["category"]" class="del_filter">
+                    @ViewData["brand"]
+                    <i class="bi bi-x-lg"></i>
+                </a>
+            }
+        </div>
+        <div class="list_container">
+            @foreach(var product in Model)
+            {
+                <a asp-action="ProductDetails" asp-route-id="@product.Id" class="product">
+                    <img src="~/@product.PathImage" alt="@product.Description"/>
+                    <div class="product_info">
+                        <span>@product.Name.ToUpper()</span>
+                        <span>@product.Description</span>
+                        <span>$@product.Price</span>
+                    </div>
+                </a>
+            }
+        </div>
+
+        @{
+            var prevDisabled = !Model.PaginasAnteriores ? "visually-hidden" : "";
+            var nextDisabled = !Model.PaginasSiguientes ? "visually-hidden" : "";
+        }
+
+        <div class="paginacion">
+            <a asp-action="Catalogue" 
+               asp-route-category="@ViewData["category"]"
+               asp-route-brand="@ViewData["brand"]"
+               asp-route-minPrice="@ViewData["minPrice"]"
+               asp-route-maxPrice="@ViewData["MaxPrice"]"
+               asp-route-page="1"
+               class="btn @prevDisabled" aria-label="page 1">
+                <i class="bi bi-chevron-double-left"></i>
+            </a>
+            <a asp-action="Catalogue"
+               asp-route-category="@ViewData["category"]"
+               asp-route-brand="@ViewData["brand"]"
+               asp-route-minPrice="@ViewData["minPrice"]"
+               asp-route-maxPrice="@ViewData["MaxPrice"]"
+               asp-route-page="@(Model.PaginaActual-1)" 
+               class="btn @prevDisabled" aria-label="previous page">
+                <i class="bi bi-chevron-left"></i>
+            </a>
+            @if (Model.PaginasTotales > 1)
+            {
+                for (var i = Model.Inicio; i <= Model.Final; i++)
+                {
+                    var paginaActiva = (i == Model.PaginaActual) ? "active" : "";
+                    <a asp-action="Catalogue"
+                       asp-route-category="@ViewData["category"]"
+                       asp-route-brand="@ViewData["brand"]"
+                       asp-route-minPrice="@ViewData["minPrice"]"
+                       asp-route-maxPrice="@ViewData["MaxPrice"]"
+                       asp-route-page="@i"
+                       class="btn @paginaActiva" aria-label="page @i">@i</a>
+                }
+            }
+            <a asp-action="Catalogue"
+               asp-route-category="@ViewData["category"]"
+               asp-route-brand="@ViewData["brand"]"
+               asp-route-minPrice="@ViewData["minPrice"]"
+               asp-route-maxPrice="@ViewData["MaxPrice"]"
+               asp-route-page="@(Model.PaginaActual+1)" 
+               class="btn @nextDisabled" aria-label="next page">
+                <i class="bi bi-chevron-right"></i>
+            </a>
+            <a asp-action="Catalogue"
+               asp-route-category="@ViewData["category"]"
+               asp-route-brand="@ViewData["brand"]"
+               asp-route-minPrice="@ViewData["minPrice"]"
+               asp-route-maxPrice="@ViewData["MaxPrice"]"
+               asp-route-page="@Model.PaginasTotales" 
+               class="btn @nextDisabled" aria-label="last page">
+                <i class="bi bi-chevron-double-right"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    const openFilters = () => {
+        document.getElementById('filter-panel').style.left = '0px';
+        document.getElementById('dark-bg-2').style.visibility = "visible";
+    }
+
+    const closePanel = () => {
+        document.getElementById('filter-panel').style.left = "-600px";
+        document.getElementById('dark-bg-2').style.visibility = "hidden";
+    }
+
+    const progress = document.getElementById('progress');
+    const min_input = document.getElementById('min_input');
+    const max_input = document.getElementById('max_input');
+    const span_min = document.getElementById('span-min');
+    const span_max = document.getElementById('span-max');
+    let priceGap = 0;
+    let minValue;
+    let maxValue;
+
+    window.addEventListener('load', function () {
+        minValue = parseFloat(min_input.value);
+        maxValue = parseFloat(max_input.value);
+        span_min.innerText = minValue;
+        span_max.innerText = maxValue;
+        
+        progress.style.left =
+            (minValue - min_input.min) * (100 / (min_input.max - min_input.min)) + "%";
+
+        progress.style.right =
+            (max_input.max - maxValue) * (100 / (max_input.max - max_input.min)) + "%";
+    });
+
+    const changeMinPrice = (e) => {
+        minValue = parseFloat(e.target.value);
+        maxValue = parseFloat(max_input.value);
+
+        if (maxValue - minValue < priceGap) {
+            e.target.value = maxValue - priceGap;
+        }
+        else {
+            progress.style.left =
+                (minValue - e.target.min) * (100 / (e.target.max - e.target.min)) + "%";
+        }
+
+        span_min.innerText = e.target.value;
+    }
+
+    const changeMaxPrice = (e) => {
+        maxValue = parseFloat(e.target.value);
+        minValue = parseFloat(min_input.value);
+
+        if (maxValue - minValue < priceGap) {
+            e.target.value = minValue + priceGap;
+        }
+        else {
+            progress.style.right =
+                (e.target.max - maxValue) * (100 / (e.target.max - e.target.min)) + "%";
+        }
+
+        span_max.innerText = e.target.value;
+    }
+
+    const navigateTo = () => {
+        let minPrice = parseFloat(document.getElementById('span-min').innerText);
+        let maxPrice = parseFloat(document.getElementById('span-max').innerText);
+        let url = "";
+        let brand = "@ViewData["brand"]";
+
+        if (brand != "") {
+            url = "@Url.Action("Catalogue", "Home")?category=@ViewData["category"]&brand=@ViewData["brand"]";
+        }
+        else {
+            url = "@Url.Action("Catalogue", "Home")?category=@ViewData["category"]";
+        }
+
+        window.location.href = url + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice;
+    }
+</script>

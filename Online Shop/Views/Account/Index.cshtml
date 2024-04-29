@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["Title"] = "Mi cuenta";
+}
+
+<h1 class="account-title">Mi cuenta</h1>
+<div class="account-container">
+    <div class="account-grid">
+        <a asp-action="LoginAndSecurity" class="account-card">
+            <i class="bi bi-shield-lock"></i>
+            <div>
+                <h2>Inicio de sesión y Seguridad</h2>
+                <span>Cambiar nombre, correo electrónico y contraseña</span>
+            </div>
+        </a>
+        <a asp-action="OrdersHistory" class="account-card">
+            <i class="bi bi-box-seam"></i>
+            <div>
+                <h2>Tus pedidos</h2>
+                <span>Encontrar los pedidos realizados y productos comprados</span>
+            </div>
+        </a>
+        <a asp-action="Addresses" class="account-card">
+            <i class="bi bi-houses"></i>
+            <div>
+                <h2>Direcciones</h2>
+                <span>Agregar y editar tus direcciones para pedidos</span>
+            </div>
+        </a>
+        <a asp-action="Wallet" class="account-card">
+            <i class="bi bi-credit-card"></i>
+            <div>
+                <h2>Mi billetera</h2>
+                <span>Administrar o agregar métodos de pago</span>
+            </div>
+        </a>
+    </div>
+</div>

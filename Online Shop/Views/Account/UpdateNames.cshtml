@@ -1,0 +1,18 @@
+﻿@using Online_Shop.Dtos;
+@model ChangeNamesRequest
+@{
+    ViewData["Title"] = "Actualizar nombres";
+}
+
+<h1 class="account-title">Cambiar mis nombres y apellidos</h1>
+<div class="ls-flex">
+    <form asp-action="UpdateNames" method="post">
+        <input asp-for="Id" type="hidden" />
+        <label>Nombre(s):</label>
+        <input asp-for="FirstName" />
+        <label>Apellido(s):</label>
+        <input asp-for="LastName" />
+
+        <button type="submit">Guardar</button>
+    </form>
+</div>

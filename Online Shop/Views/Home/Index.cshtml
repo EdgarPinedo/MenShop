@@ -1,0 +1,126 @@
+﻿@using Online_Shop.Dtos;
+@model HomeViewModel;
+
+@{
+    ViewData["Title"] = "Inicio";
+}
+
+<div class='panel'>
+    <div class='panel-left'>
+        <h1>MODA</h1>
+        <div>
+            <p>Encuentra la mejor ropa y calzado en tendencia para hombres</p>
+            <p>Descubre lo nuevo en esta temporada</p>
+            <a asp-action="Catalogue">Explorar</a>
+        </div>
+    </div>
+    <div class='panel-right'>
+        <img src="~/Images/home_1.jpg" alt="Imágen de presentación 1"/>
+        <img src="~/Images/home_2.jpg" alt="Imágen de presentación 2" />
+        <img src="~/Images/home_3.jpg" alt="Imágen de presentación 3" />
+        <h1>MODA</h1>
+        <a asp-action="Catalogue">Explorar</a>
+    </div>
+</div>
+
+<h1 class="section_title">Últimas novedades</h1>
+<section class="news_section">
+    <div class="list">
+        @foreach(var product in Model.NewProducts)
+        {
+            <a asp-action="ProductDetails" asp-route-id="@product.Id" class="list_item">
+                <img src="~/@product.PathImage" alt="@product.Description"/>
+                <span>@product.Name.ToUpper()</span>
+                <span>@product.Description</span>
+                <span>$@product.Price</span>
+            </a>
+        }
+    </div>
+    <button aria-label="left button" class="left-button" onclick="toLeft()">
+        <i class="bi bi-chevron-left"></i>
+    </button>
+    <button aria-label="right button" class="right-button" onclick="toRight()">
+        <i class="bi bi-chevron-right"></i>
+    </button>
+</section>
+
+<h1 class="section_title">Lo último en moda</h1>
+<section class="recommended-section">
+    <div class="recommended-grid">
+        @foreach (var product in Model.RecommendedProducts)
+        {
+            <a asp-action="ProductDetails" asp-route-id="@product.Id" class="recommended-item">
+                <img src="~/@product.PathImage" alt="@product.Description"/>
+                <div class="item-info">
+                    <span>@product.Name.ToUpper()</span>
+                    <span>@product.Description</span>
+                    <span>$@product.Price</span>
+                </div>
+            </a>
+        }
+    </div>
+</section>
+
+<h1 class="section_title">Descubre</h1>
+<div class="categories_container">
+    <a asp-action="Catalogue" asp-route-category="Shirts">
+        <div>Camisas</div>
+        <img src="~/Images/Camisas.webp" alt="Categoría: camisas" />
+    </a>
+    <a asp-action="Catalogue" asp-route-category="Pants">
+        <div>Pantalones</div>
+        <img src="~/Images/Pantalones.webp" alt="Categoría: pantalones" />
+    </a>
+    <a asp-action="Catalogue" asp-route-category="Shoes">
+        <div>Calzado</div>
+        <img src="~/Images/Calzado.webp" alt="Categoría: calzado" />
+    </a>
+    <a asp-action="Catalogue" asp-route-category="Sweaters">
+        <div>Sueteres</div>
+        <img src="~/Images/Sueteres.webp" alt="Categoría: sueteres" />
+    </a>
+</div>
+
+<script>
+    const slider = document.querySelector(".list");
+    let isMoving = false;
+
+    const toRight = () => {
+        if (!isMoving) {
+            isMoving = true;
+            let sliderFirstItem = document.querySelectorAll(".list_item")[0];
+            let itemWidth = (sliderFirstItem.offsetWidth * -1 - 20) * 2;
+
+            slider.style.transition = "margin-left .2s";
+            slider.style.marginLeft = itemWidth + "px";
+            setTimeout(() => {
+                slider.style.transition = "none";
+                slider.insertAdjacentElement("beforeend", sliderFirstItem);
+                slider.style.marginLeft = "0px";
+                isMoving = false;
+            }, 200);
+        }
+    }
+
+    const toLeft = () => {
+        if (!isMoving) {
+            isMoving = true;
+            let sliderItems = document.querySelectorAll(".list_item");
+            let sliderLastItem = sliderItems[sliderItems.length - 1];
+            let itemWidth = (sliderLastItem.offsetWidth * -1 - 20) * 2;
+
+            slider.style.transition = "none";
+            slider.style.marginLeft = itemWidth + "px";
+            slider.insertAdjacentElement("afterbegin", sliderLastItem);
+            
+            setTimeout(() => {
+                slider.style.transition = "margin-left .2s";
+                slider.style.marginLeft = "0px";
+            }, 1);
+            setTimeout(() => {
+                isMoving = false;
+            }, 199);
+        }
+    }
+
+</script>

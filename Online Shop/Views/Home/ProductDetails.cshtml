@@ -1,0 +1,143 @@
+﻿@using Online_Shop.Dtos;
+@model ProductResponse;
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div class="details_container">
+    <div class="details_left">
+        <img alt="image for @Model.Description" src="~/@Model.PathImage" />
+    </div>
+    <div class="details_right">
+        <h1>@Model.Name.ToUpper()</h1>
+        <h2>@Model.Description</h2>
+        <span>Precio</span>
+        <span>$@Model.Price</span>
+        <hr />
+        <span>Selecciona un color</span>
+        <span id="color">Rojo</span>
+        <div class="colors">
+            <div id="red" class="circle active">
+                <button aria-label="red" onclick="setActiveColor(1)" class="color red"></button>
+            </div>
+            <div id="blue" class="circle">
+                <button aria-label="blue" onclick="setActiveColor(2)" class="color blue"> </button>
+            </div>
+            <div id="black" class="circle">
+                <button aria-label="black" onclick="setActiveColor(3)" class="color black"></button>
+            </div>
+            <div id="white" class="circle">
+                <button aria-label="white" onclick="setActiveColor(4)" class="color white"></button>
+            </div>
+        </div>
+        <hr />
+        <span>Selecciona la talla</span>
+        <div class="sizes">
+            <button id="CH" aria-label="CH" onclick="setActiveSize(event)" class="size active">CH</button>
+            <button id="M" aria-label="M" onclick="setActiveSize(event)" class="size">M</button>
+            <button id="G" aria-label="G" onclick="setActiveSize(event)" class="size">G</button>
+            <button id="EG" aria-label="EG" onclick="setActiveSize(event)" class="size">EG</button>
+        </div>
+        <hr />
+        <span>Selecciona la cantidad</span>
+        <div class="qty_selector">
+            <button onclick="subtract()">-</button>
+            <input value="1"
+                    id="qty"
+                    type="number"
+                    min="1"
+                    step="1"
+                    oninput="validateQty(event)"
+                    onblur="preventEmpty(event)"/>
+            <button onclick="add()">+</button>
+        </div>
+        <hr />
+        <button onclick="addToCart()" aria-label="Agregar a la bolsa" class="buy-btn">
+            Agregar a la bolsa
+        </button>
+    </div>
+</div>
+
+<script>
+    let activeColor = document.getElementById("red");
+    let colorSpan = document.getElementById("color");
+    const setActiveColor = (opt) => {
+        activeColor.classList.remove('active');
+
+        switch (opt) {
+            case 1:
+                colorSpan.innerHTML = "rojo";
+                activeColor = document.getElementById("red");
+                break;
+            case 2:
+                colorSpan.innerHTML = "azul";
+                activeColor = document.getElementById("blue");
+                break;
+            case 3:
+                colorSpan.innerHTML = "negro";
+                activeColor = document.getElementById("black");
+                break;
+            case 4:
+                colorSpan.innerHTML = "blanco";
+                activeColor = document.getElementById("white");
+                break;
+            default:
+                colorSpan.innerHTML = "rojo";
+        }
+        activeColor.classList.add('active');
+    }
+
+    let activeSize = document.getElementById("CH");
+    const setActiveSize = (event) => {
+        activeSize.classList.remove('active');
+        activeSize = event.target;
+        activeSize.classList.add('active');
+    }
+
+    const validateQty = (event) => {
+        let isNum = /^(?!0)[0-9]{1,2}$/.test(event.target.value)
+        if (!isNum) {
+            event.target.value = '';
+        }
+    }
+
+    const preventEmpty = (event) => {
+        if (event.target.value === "")
+        {
+            event.target.value = "1";
+        }     
+    }
+
+    const subtract = () => {
+        let qtyInput = document.getElementById("qty");
+        let qty = parseInt(qtyInput.value);
+
+        if ((qty - 1) > 0) {
+            qtyInput.value = qty - 1;
+        }    
+    }
+
+    const add = () => {
+        let qtyInput = document.getElementById("qty");
+        let qty = parseInt(qtyInput.value);
+
+        if ((qty + 1) < 100) {
+            qtyInput.value = qty + 1;
+        }
+    }
+ 
+    const addToCart = () => {
+        let qtyValue = parseInt(document.getElementById("qty").value);
+        let color = document.getElementById("color").innerHTML;
+        let urlController = "@Url.Action("AddToCart", "Cart")?productId=@Model.Id&quantity=" + qtyValue + "&color=" + color + "&size=" + activeSize.innerHTML;
+        $.ajax({
+            async: true,
+            url: urlController
+        });
+        setTimeout(() => {
+            window.location.href = "@Url.Action("Index", "Cart")";
+        }, 200);
+    }
+
+</script>

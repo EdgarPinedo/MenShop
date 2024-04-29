@@ -1,0 +1,34 @@
+﻿@model User
+@{
+    ViewData["Title"] = "Inicio de sesión y seguridad";
+}
+
+<h1 class="account-title">Inicio de sesión y seguridad</h1>
+<div class="ls-flex">
+    <div class="ls-container">
+        <div class="ls-item">
+            <div>
+                <span>Nombre(s):</span>
+                <span>@Model.FirstName</span>
+                
+                <span>Apellido(s):</span>
+                <span>@Model.LastName</span>
+            </div>
+            <a asp-action="UpdateNames">Modificar</a>
+        </div>
+        <div class="ls-item">
+            <div>
+                <span>Email:</span>
+                <span>@Model.Email</span>
+            </div>
+            <a asp-action="UpdateEmail">Modificar</a>
+        </div>
+        <div class="ls-item">
+            <div>
+                <span>Contraseña:</span>
+                <span>********</span>
+            </div>
+            <a asp-action="UpdatePassword">Modificar</a>
+        </div>
+    </div>
+</div>
